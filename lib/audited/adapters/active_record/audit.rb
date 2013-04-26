@@ -20,9 +20,9 @@ module Audited
 
         default_scope         -> { order(:version) }
         scope :descending,    -> { reorder("version DESC") }
-        scope :creates,       -> { action: 'create' }
-        scope :updates,       -> { action: 'update' }
-        scope :destroys,      -> { action: 'destroy' }
+        scope :creates,       -> { where(action: 'create') }
+        scope :updates,       -> { where(action: 'update') }
+        scope :destroys,      -> { where(action: 'destroy') }
 
         scope :up_until,      ->(date_or_time) { where("created_at <= ?", date_or_time) }
         scope :from_version,  ->(version) { where(['version >= ?', version]) }
