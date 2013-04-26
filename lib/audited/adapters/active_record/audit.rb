@@ -16,18 +16,17 @@ module Audited
       class Audit < ::ActiveRecord::Base
         include Audited::Audit
 
-
         serialize :audited_changes
 
-        default_scope         order(:version)
-        scope :descending,    reorder("version DESC")
-        scope :creates,       :conditions => {:action => 'create'}
-        scope :updates,       :conditions => {:action => 'update'}
-        scope :destroys,      :conditions => {:action => 'destroy'}
+        default_scope         -> { order(:version) }
+        scope :descending,    -> { reorder("version DESC") }
+        scope :creates,       -> { action: 'create' }
+        scope :updates,       -> { action: 'update' }
+        scope :destroys,      -> { action: 'destroy' }
 
-        scope :up_until,      lambda {|date_or_time| where("created_at <= ?", date_or_time) }
-        scope :from_version,  lambda {|version| where(['version >= ?', version]) }
-        scope :to_version,    lambda {|version| where(['version <= ?', version]) }
+        scope :up_until,      ->(date_or_time) { where("created_at <= ?", date_or_time) }
+        scope :from_version,  ->(version) { where(['version >= ?', version]) }
+        scope :to_version,    ->(version) { where(['version <= ?', version]) }
 
         # Return all audits older than the current one.
         def ancestors
